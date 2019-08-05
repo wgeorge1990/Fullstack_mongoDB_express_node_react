@@ -5,12 +5,14 @@ class App extends Component {
   // initialize our state
   state = {
     data: [],
+    user: [],
     id: 0,
     message: null,
     intervalIsSet: false,
     idToDelete: null,
     idToUpdate: null,
     objectToUpdate: null,
+    username: null
   };
 
   // when component mounts, first thing it does is fetch all existing data in our db
@@ -97,6 +99,22 @@ class App extends Component {
     });
   };
 
+  putUserToDB = (username) => {
+    console.log(username)
+    let currentIds = this.state.data.map((data) => data.id);
+    let idToBeAdded = 0;
+    while (currentIds.includes(idToBeAdded)) {
+      ++idToBeAdded;
+    }
+
+    axios.post('http://localhost:3001/api/putUser', {
+      id: idToBeAdded,
+      username: username,
+    }).then(this.getDataFromDb)
+  };
+
+
+
   // here is our UI
   // it is easy to understand their functions when you
   // see them render into our screen
@@ -156,6 +174,17 @@ class App extends Component {
             }
           >
             UPDATE
+          </button>
+        </div>
+        <div style={{ padding: '10px' }}>
+          <input
+            type="text"
+            onChange={(e) => this.setState({ username: e.target.value })}
+            placeholder="username"
+            style={{ width: '200px' }}
+          />
+          <button onClick={() => this.putUserToDB(this.state.username)}>
+            ADD
           </button>
         </div>
       </div>

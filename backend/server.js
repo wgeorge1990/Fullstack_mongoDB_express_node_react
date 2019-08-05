@@ -58,7 +58,7 @@ router.delete('/deleteData', (req, res) => {
     });
 });
 
-// this is our create methid
+// this is our create method
 // this method adds new data in our database
 router.post('/putData', (req, res) => {
     let data = new Data();
@@ -78,6 +78,40 @@ router.post('/putData', (req, res) => {
         return res.json({ success: true });
     });
 });
+
+
+
+router.post('/putUser', (req, res) => {
+    let user = new User();
+
+    const {
+        id,
+        username,
+        firstname,
+        lastname
+    } = req.body;
+
+    if ((!id && id !== 0) || !username) {
+        return res.json({
+            success: false,
+            error: 'INVALID INPUTS',
+        });
+    }
+    user.username = username;
+    user.firstname = firstname;
+    user.lastname = lastname;
+    user.id = id;
+    user.save((err) => {
+        if (err) return res.json({
+            success: false,
+            error: err
+        });
+        return res.json({
+            success: true
+        });
+    });
+});
+
 
 // append /api for our http requests
 app.use('/api', router);
