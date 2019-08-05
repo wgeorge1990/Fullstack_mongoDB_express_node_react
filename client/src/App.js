@@ -6,7 +6,12 @@ class App extends Component {
   state = {
     data: [],
     user: [],
-    userToSave: {firstname: null, lastname: null, username: null, image: null},
+    userToSave: {
+      firstname: null,
+      lastname: null,
+      username: null, 
+      image: null
+    },
     id: 0,
     message: null,
     intervalIsSet: false,
