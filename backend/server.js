@@ -29,20 +29,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-// this is our get method
+// this is our get method that fetches our data model
 // this method fetches all available data in our database
 router.get('/getData', (req, res) => {
-    Data.find((err, data) => {
+    Data.data.find((err, data) => {
         if (err) return res.json({ success: false, error: err });
         return res.json({ success: true, data: data });
     });
 });
 
+// This get method fetches our users
+router.get('/getUsers', (req, res) => {
+    Data.users.find((err, data) => {
+        if (err) return res.json({ success: false, error: err });
+        return res.json({ success: true, users: data})
+    })
+})
+
 // this is our update method
 // this method overwrites existing data in our database
 router.post('/updateData', (req, res) => {
     const { id, update } = req.body;
-    Data.findByIdAndUpdate(id, update, (err) => {
+    Data.data.findByIdAndUpdate(id, update, (err) => {
         if (err) return res.json({ success: false, error: err });
         return res.json({ success: true });
     });
@@ -52,7 +60,7 @@ router.post('/updateData', (req, res) => {
 // this method removes existing data in our database
 router.delete('/deleteData', (req, res) => {
     const { id } = req.body;
-    Data.findByIdAndRemove(id, (err) => {
+    Data.data.findByIdAndRemove(id, (err) => {
         if (err) return res.send(err);
         return res.json({ success: true });
     });
@@ -61,7 +69,7 @@ router.delete('/deleteData', (req, res) => {
 // this is our create method
 // this method adds new data in our database
 router.post('/putData', (req, res) => {
-    let data = new Data();
+    let data = new Data.data();
 
     const { id, message } = req.body;
 
@@ -80,15 +88,16 @@ router.post('/putData', (req, res) => {
 });
 
 
-
+// Add a user to the user collection inside of the database
 router.post('/putUser', (req, res) => {
-    let user = new User();
+    let user = new Data.users();
 
     const {
         id,
-        username,
+        username, 
         firstname,
-        lastname
+        lastname,
+        image
     } = req.body;
 
     if ((!id && id !== 0) || !username) {
@@ -97,10 +106,13 @@ router.post('/putUser', (req, res) => {
             error: 'INVALID INPUTS',
         });
     }
+
     user.username = username;
     user.firstname = firstname;
     user.lastname = lastname;
+    user.image = image
     user.id = id;
+    debugger
     user.save((err) => {
         if (err) return res.json({
             success: false,

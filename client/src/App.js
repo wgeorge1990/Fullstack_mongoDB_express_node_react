@@ -6,6 +6,9 @@ class App extends Component {
   state = {
     data: [],
     user: [],
+    firstname: null,
+    lastname: null,
+    image: null,
     id: 0,
     message: null,
     intervalIsSet: false,
@@ -24,6 +27,7 @@ class App extends Component {
       let interval = setInterval(this.getDataFromDb, 300000);
       this.setState({ intervalIsSet: interval });
     }
+    this.getUsersFromDb();
   }
 
   // never let a process live forever
@@ -45,8 +49,19 @@ class App extends Component {
   getDataFromDb = () => {
     fetch('http://localhost:3001/api/getData')
       .then((data) => data.json())
-      .then((res) => this.setState({ data: res.data }));
+      .then((res) => this.setState({
+        data: res.data
+      }));
   };
+
+  getUsersFromDb = () => {
+    fetch('http://localhost:3001/api/getUsers')
+      .then((data) => data.json())
+      .then((res) => this.setState({
+        user: res.users
+      }))
+  }
+
 
   // our put method that uses our backend api
   // to create new query into our data base
@@ -63,6 +78,27 @@ class App extends Component {
       message: message,
     }).then(this.getDataFromDb)
   };
+
+
+  putUserToDB = (username, firstname, lastname, image) => {
+    console.log(username, firstname, lastname, image)
+    let currentIds = this.state.user.map((user) => user.id);
+    let userIdToBeAdded = 0;
+    while (currentIds.includes(userIdToBeAdded)) {
+      ++userIdToBeAdded;
+    }
+
+    axios.post('http://localhost:3001/api/putUser', {
+      id: userIdToBeAdded,
+      username: username,
+      firstname: firstname,
+      lastname: lastname,
+      image: image
+    }).then(this.getUsersFromDb)
+  };
+
+
+
 
   // our delete method that uses our backend api
   // to remove existing database information
@@ -99,22 +135,7 @@ class App extends Component {
     });
   };
 
-  putUserToDB = (username) => {
-    console.log(username)
-    let currentIds = this.state.data.map((data) => data.id);
-    let idToBeAdded = 0;
-    while (currentIds.includes(idToBeAdded)) {
-      ++idToBeAdded;
-    }
-
-    axios.post('http://localhost:3001/api/putUser', {
-      id: idToBeAdded,
-      username: username,
-    }).then(this.getDataFromDb)
-  };
-
-
-
+  
   // here is our UI
   // it is easy to understand their functions when you
   // see them render into our screen
@@ -126,7 +147,7 @@ class App extends Component {
           {data.length <= 0
             ? 'NO DB ENTRIES YET'
             : data.map((dat) => (
-                <li style={{ padding: '10px' }} key={data.message}>
+              <li key={dat._id} style={{ padding: '10px' }} >
                   <span style={{ color: 'gray' }}> id: </span> {dat.id} <br />
                   <span style={{ color: 'gray' }}> data: </span>
                   {dat.message}
@@ -183,7 +204,25 @@ class App extends Component {
             placeholder="username"
             style={{ width: '200px' }}
           />
-          <button onClick={() => this.putUserToDB(this.state.username)}>
+           <input
+            type="text"
+            onChange={(e) => this.setState({ firstname: e.target.value })}
+            placeholder="firstname"
+            style={{ width: '200px' }}
+          />
+           <input
+            type="text"
+            onChange={(e) => this.setState({ lastname: e.target.value })}
+            placeholder="lastname"
+            style={{ width: '200px' }}
+          />
+           <input
+            type="text"
+            onChange={(e) => this.setState({ image: e.target.value })}
+            placeholder="image"
+            style={{ width: '200px' }}
+          />
+          <button onClick={() => this.putUserToDB(this.state.username, this.state.firstname, this.state.lastname, this.state.image)}>
             ADD
           </button>
         </div>

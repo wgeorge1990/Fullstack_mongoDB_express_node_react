@@ -14,11 +14,14 @@ const UserSchema = new Schema({
     id: Number,
     username: String,
     firstname: String,
-    lastname: String
+    lastname: String,
+    image: String
 }, {
         timestamps: true
     });
 
 // export the new Schema so we could modify it using Node.js
-module.exports = mongoose.model("Data", DataSchema);
-module.exports = mongoose.model("User", UserSchema)
+module.exports = {
+    data: mongoose.model("Data", DataSchema),
+    users: mongoose.model("User", UserSchema)
+}
