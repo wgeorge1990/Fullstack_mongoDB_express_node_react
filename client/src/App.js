@@ -6,16 +6,13 @@ class App extends Component {
   state = {
     data: [],
     user: [],
-    firstname: null,
-    lastname: null,
-    image: null,
+    userToSave: {firstname: null, lastname: null, username: null, image: null},
     id: 0,
     message: null,
     intervalIsSet: false,
     idToDelete: null,
     idToUpdate: null,
-    objectToUpdate: null,
-    username: null
+    objectToUpdate: null
   };
 
   // when component mounts, first thing it does is fetch all existing data in our db
@@ -200,29 +197,34 @@ class App extends Component {
         <div style={{ padding: '10px' }}>
           <input
             type="text"
-            onChange={(e) => this.setState({ username: e.target.value })}
+            onChange={(e) => this.setState({ userToSave: { ...this.state.userToSave, username: e.target.value }})}
             placeholder="username"
             style={{ width: '200px' }}
           />
            <input
             type="text"
-            onChange={(e) => this.setState({ firstname: e.target.value })}
+            onChange={(e) => this.setState({ userToSave: { ...this.state.userToSave, firstname: e.target.value }})}
             placeholder="firstname"
             style={{ width: '200px' }}
           />
            <input
             type="text"
-            onChange={(e) => this.setState({ lastname: e.target.value })}
+            onChange = {
+              (e) => this.setState({ userToSave: { ...this.state.userToSave, lastname: e.target.value }})}
             placeholder="lastname"
             style={{ width: '200px' }}
           />
            <input
             type="text"
-            onChange={(e) => this.setState({ image: e.target.value })}
+            onChange={(e) => this.setState({ userToSave: { ...this.state.userToSave, image: e.target.value }})}
             placeholder="image"
             style={{ width: '200px' }}
           />
-          <button onClick={() => this.putUserToDB(this.state.username, this.state.firstname, this.state.lastname, this.state.image)}>
+          <button onClick={() => this.putUserToDB(
+            this.state.userToSave.username,
+            this.state.userToSave.firstname,
+            this.state.userToSave.lastname,
+            this.state.userToSave.image) }>
             ADD
           </button>
         </div>
